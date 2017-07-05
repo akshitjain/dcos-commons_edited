@@ -1,5 +1,4 @@
 apply plugin: 'findbugs'
-apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply plugin: 'jacoco'
 
@@ -12,10 +11,7 @@ tasks.withType(FindBugs) {
   }
 }
 
-checkstyle {
-    configFile = file("$rootProject.projectDir/gradle/checkstyle/checkstyle.xml")
-    sourceSets = [project.sourceSets.main] // disable style checks on tests
-}
+
 
 pmd {
     ruleSets = [

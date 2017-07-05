@@ -30,3 +30,21 @@ project(":frameworks/template").name = "template"
 include 'frameworks/cassandra'
 project(":frameworks/cassandra").name = "cassandra"
 
+
+include 'frameworks/helloworldjava'
+project(":frameworks/helloworldjava").name = "helloworldjava"
+
+include 'frameworks/POC'
+project(":frameworks/POC").name = "POC"
+
+include 'frameworks/poc'
+project(":frameworks/poc").name = "poc"
+
+include 'frameworks/pocs'
+project(":frameworks/pocs").name = "pocs"
+
+include 'frameworks/pocsansyml'
+project(":frameworks/pocsansyml").name = "pocsansyml"
+
+include 'frameworks/testsdk'
+project(":frameworks/testsdk").name = "testsdk"

@@ -36,7 +36,7 @@ public class Main {
                                     .name(TASK_NAME)
                                     .goalState(GoalState.RUNNING)
                                     .commandSpec(DefaultCommandSpec.newBuilder(taskEnvRouter.getConfig(POD_TYPE))
-                                            .value("echo hello >> hello-container-path/output && sleep 1000")
+                                            .value("echo akshitjain >> hello-container-path/output && sleep 1000")
                                             .build())
                                     .resourceSet(DefaultResourceSet
                                             .newBuilder("hello-world-role", Constants.ANY_ROLE, "hello-world-principal")

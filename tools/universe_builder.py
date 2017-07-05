@@ -163,6 +163,7 @@ class UniversePackageBuilder(object):
         '''builds a stub universe json package and returns its location on disk'''
 
         # read files into memory and apply templating to files:
+        logger.info('-----------------------In universe_builder.py')
         updated_package_files = {}
         for filename, content in self._iterate_package_files():
             updated_package_files[filename] = self._apply_templating_to_file(filename, content)

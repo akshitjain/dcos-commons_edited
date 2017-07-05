@@ -36,29 +36,39 @@ _notify_github() {
 
 _notify_github pending "Build running"
 
+# Verify airgap (except for hello world)
+# if [ $FRAMEWORK_NAME != "hello-world" ];
+# then
+#     ${TOOLS_DIR}/airgap_linter.py ${FRAMEWORK_DIR}
+# fi
+
+echo "---------build_framework  1"
 # Service (Java):
 ${REPO_ROOT_DIR}/gradlew -p ${FRAMEWORK_DIR} check distZip
 if [ $? -ne 0 ]; then
   _notify_github failure "Gradle build failed"
   exit 1
 fi
+echo "---------build_framework  2"
+# INCLUDE_BOOTSTRAP=""
+# if [ "$BUILD_BOOTSTRAP" == "yes" ]; then
+#     # Executor Bootstrap (Go):
+#     BOOTSTRAP_DIR=${TOOLS_DIR}/../sdk/bootstrap
+#     ${BOOTSTRAP_DIR}/build.sh
+#     if [ $? -ne 0 ]; then
+#         _notify_github failure "Bootstrap build failed"
+#         exit 1
+#     fi
+#     INCLUDE_BOOTSTRAP="${BOOTSTRAP_DIR}/bootstrap.zip"
+# fi
 
-INCLUDE_BOOTSTRAP=""
-if [ "$BUILD_BOOTSTRAP" == "yes" ]; then
-    # Executor Bootstrap (Go):
-    BOOTSTRAP_DIR=${TOOLS_DIR}/../sdk/bootstrap
-    ${BOOTSTRAP_DIR}/build.sh
-    if [ $? -ne 0 ]; then
-        _notify_github failure "Bootstrap build failed"
-        exit 1
-    fi
-    INCLUDE_BOOTSTRAP="${BOOTSTRAP_DIR}/bootstrap.zip"
-fi
-
+echo "---------build_framework  3"
 # CLI (Go):
 # /home/user/dcos-commons/frameworks/helloworld/cli => frameworks/helloworld/cli
 REPO_CLI_RELATIVE_PATH="$(echo $CLI_DIR | cut -c $((2 + ${#REPO_ROOT_DIR}))-)"
+echo "---------build_framework  4"
 ${TOOLS_DIR}/build_cli.sh ${CLI_EXE_NAME} ${CLI_DIR} ${REPO_CLI_RELATIVE_PATH}
+echo "---------build_framework  5"
 if [ $? -ne 0 ]; then
     _notify_github failure "CLI build failed"
     exit 1

@@ -37,8 +37,8 @@ class HTTPPublisher(object):
         self._input_dir_path = input_dir_path
 
         self._http_dir = os.environ.get('HTTP_DIR', '/tmp/dcos-http-{}/'.format(package_name))
-        self._http_host = os.environ.get('HTTP_HOST', '172.17.0.1')
-        self._http_port = int(os.environ.get('HTTP_PORT', '0'))
+        self._http_host = os.environ.get('HTTP_HOST', '10.41.122.83')
+        self._http_port = int(os.environ.get('HTTP_PORT', '8080'))
 
         self._github_updater = github_update.GithubStatusUpdater('upload:{}'.format(package_name))
 
@@ -137,22 +137,26 @@ class HTTPPublisher(object):
             logger.info("Killed previous HTTP process(es): {}".format(procname))
         except:
             logger.info("No previous HTTP process found: {}".format(procname))
-
-        if self._http_port == 0:
+        logger.info("publish sample------------")
+        if self._http_port == 8080:             #Change 3
             # hack: grab/release a suitable ephemeral port and hope nobody steals it in the meantime
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.bind((self._http_host, 0))
             port = sock.getsockname()[1]
             sock.close()
+            logger.info("publish sample------1------")
         else:
             port = self._http_port
-
+            logger.info("publish sample------2------")
+        logger.info("publish sample------3------")
         http_url_root = 'http://{}:{}'.format(self._http_host, port)
-
+        logger.info("URL root")
+        #### It is http://172.17.0.1:0
+        logger.info(http_url_root)
         self._package_builder = universe_builder.UniversePackageBuilder(
             self._pkg_name, self._pkg_version,
             self._input_dir_path, http_url_root, self._artifact_paths)
-
+        logger.info("publish sample------4------")
         # hack: write httpd script then run it directly
         httpd_py_content = '''#!/usr/bin/env python3
 import os, socketserver
@@ -161,7 +165,6 @@ rootdir = '{}'
 host = '{}'
 port = {}
 json_content_type = '{}'
-
 class CustomTypeHandler(SimpleHTTPRequestHandler):
     def __init__(self, req, client_addr, server):
         SimpleHTTPRequestHandler.__init__(self, req, client_addr, server)
@@ -169,7 +172,6 @@ class CustomTypeHandler(SimpleHTTPRequestHandler):
         if path.endswith('.json'):
             return json_content_type
         return SimpleHTTPRequestHandler.guess_type(self, path)
-
 os.chdir(rootdir)
 httpd = socketserver.TCPServer((host, port), CustomTypeHandler)
 print('Serving %s at http://%s:%s' % (rootdir, host, port))
@@ -223,6 +225,7 @@ def main(argv):
         print_help(argv)
         return 1
     # the package name:
+    print('-----------------In publish_http.py   1')
     package_name = argv[1]
     # local path where the package template is located:
     package_dir_path = argv[2].rstrip('/')
@@ -233,11 +236,16 @@ Package:         {}
 Template path:   {}
 Artifacts:       {}
 ###'''.format(package_name, package_dir_path, ', '.join(artifact_paths)))
-
+    logger.info('-----------------In publish_http.py   2')
     publisher = HTTPPublisher(package_name, package_dir_path, artifact_paths)
+    logger.info('-----------------In publish_http.py   3')
     http_url_root = publisher.launch_http()
+    logger.info('-----------------In publish_http.py   4')
     universe_url = publisher.build(http_url_root)
+    logger.info('-----------------In publish_http.py   5')
     repo_added = publisher.add_repo_to_cli(universe_url)
+    
+
     logger.info('---')
     logger.info('(Re)install your package using the following commands:')
     logger.info('dcos package uninstall {}'.format(package_name))
